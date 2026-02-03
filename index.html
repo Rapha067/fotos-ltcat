@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Checklist por Setor</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f6f8;
+            padding: 30px;
+        }
+
+        h1 {
+            margin-bottom: 20px;
+        }
+
+        .setor {
+            margin-bottom: 30px;
+        }
+
+        .setor h2 {
+            background: #34495e;
+            color: white;
+            padding: 8px 12px;
+            border-radius: 6px;
+        }
+
+        ul {
+            list-style: none;
+            padding: 0;
+            margin-top: 10px;
+        }
+
+        li {
+            display: flex;
+            align-items: center;
+            background: #fff;
+            margin-bottom: 8px;
+            padding: 10px;
+            border-radius: 6px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.08);
+        }
+
+        button {
+            margin-right: 10px;
+            padding: 6px 10px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            background: #2ecc71;
+            color: white;
+        }
+
+        button.reabrir {
+            background: #e67e22;
+        }
+
+        .concluida {
+            text-decoration: line-through;
+            color: #888;
+            opacity: 0.8;
+        }
+    </style>
+</head>
+<body>
+
+<h1>Checklist de Tarefas por Setor</h1>
+
+<div id="conteudo"></div>
+
+<script>
+    const dadosPadrao1 = [
+{ setor: "Administração de Pessoal", texto: "ANALISTA ADMINISTRAÇÃO PESSOAL JR", concluída: false },
+{ setor: "Administração de Pessoal", texto: "ANALISTA DEPTO PESSOAL", concluída: false },
+{ setor: "Administração de Pessoal", texto: "ANALISTA RECURSOS HUMANOS SR", concluída: false },
+{ setor: "Administração de Pessoal", texto: "ASSISTENTE ADM PESSOAL", concluída: false },
+{ setor: "Administração de Pessoal", texto: "AUXILIAR ADMINISTRATIVO", concluída: false },
+{ setor: "Administração de Pessoal", texto: "COORDENADOR ADMINISTRAÇÃO PESSOAL", concluída: false },
+{ setor: "Administração Pronto Atendimento", texto: "COORDENADOR ENFERMAGEM", concluída: false },
+{ setor: "Administração Pronto Atendimento", texto: "ENFERMEIRO LIDER", concluída: false },
+{ setor: "Administração Pronto Atendimento", texto: "ESCRITURARIO", concluída: false },
+{ setor: "Administração Serviços de Imagem", texto: "ANALISTA SADT JR", concluída: false },
+{ setor: "Administração Serviços de Imagem", texto: "APRENDIZ ROTINAS ADMINISTRATIVAS", concluída: false },
+{ setor: "Administração Serviços de Imagem", texto: "COORDENADOR ENFERMAGEM", concluída: false },
+{ setor: "Administração Serviços de Imagem", texto: "GERENTE DE SADT", concluída: false },
+{ setor: "Administração Unidade Cirurgica", texto: "COORDENADOR ENFERMAGEM", concluída: false },
+{ setor: "Administração Unidade Cirurgica", texto: "ENFERMEIRO", concluída: false },
+{ setor: "Administração Unidade Cirurgica", texto: "ENFERMEIRO LIDER", concluída: false },
+{ setor: "Administração Unidade Cirurgica", texto: "ESCRITURARIO", concluída: false },
+{ setor: "Administração Unidade Clinica", texto: "APRENDIZ ROTINAS ADMINISTRATIVAS", concluída: false },
+{ setor: "Administração Unidade Clinica", texto: "COORDENADOR ENFERMAGEM", concluída: false },
+{ setor: "Administração Unidade Clinica", texto: "ENFERMEIRO", concluída: false },
+{ setor: "Administração Unidade Clinica", texto: "ENFERMEIRO LIDER", concluída: false },
+{ setor: "Administração Unidade Clinica", texto: "ESCRITURARIO", concluída: false },
+{ setor: "Administração Unidades Externa", texto: "ANALISTA ADMINISTRATIVO SR", concluída: false },
+{ setor: "Administração Unidades Externa", texto: "ASSISTENTE ADMINISTRATIVO", concluída: false },
+{ setor: "Administração Unidades Externa", texto: "COORDENADOR UNIDADES EXTERNAS", concluída: false },
+{ setor: "Administração Unidades Externa", texto: "ENFERMEIRO", concluída: false },
+{ setor: "Administração Unidades Externa", texto: "ENFERMEIRO LIDER", concluída: false },
+{ setor: "Administração Unidades Externa", texto: "SUPERVISOR ADMINISTRATIVO", concluída: false },
+{ setor: "Almoxarifado Externo", texto: "ALMOXARIFE", concluída: false },
+{ setor: "Almoxarifado Externo", texto: "APRENDIZ ROTINAS ADMINISTRATIVAS", concluída: false },
+{ setor: "Almoxarifado Externo", texto: "AUXILIAR ALMOXARIFADO", concluída: false },
+{ setor: "Almoxarifado Externo", texto: "SUPERVISOR ALMOXARIFADO", concluída: false },
+{ setor: "Ambulatorio Cardiologia - Recepção", texto: "LIDER AMBULATORIO", concluída: false },
+{ setor: "Ambulatorio Cardiologia - Recepção", texto: "RECEPCIONISTA", concluída: false },
+{ setor: "Ambulatorio Cirurgia - Recepção", texto: "AUXILIAR ADMINISTRATIVO", concluída: false },
+{ setor: "Ambulatorio Cirurgia - Recepção", texto: "LIDER AMBULATORIO", concluída: false },
+{ setor: "Ambulatorio Cirurgia - Recepção", texto: "RECEPCIONISTA", concluída: false },
+{ setor: "Ambulatorio Dermatologia - Recepção", texto: "LIDER AMBULATORIO", concluída: false },
+{ setor: "Ambulatorio Dermatologia - Recepção", texto: "RECEPCIONISTA", concluída: false },
+{ setor: "Ambulatorio Endoscopia", texto: "ENFERMEIRO", concluída: false },
+{ setor: "Ambulatorio Externo - Recepção", texto: "APRENDIZ ROTINAS ADMINISTRATIVAS", concluída: false },
+{ setor: "Ambulatorio Externo - Recepção", texto: "AUXILIAR ADMINISTRATIVO", concluída: false },
+{ setor: "Ambulatorio Externo - Recepção", texto: "LIDER AMBULATORIO", concluída: false },
+{ setor: "Ambulatorio Externo - Recepção", texto: "RECEPCIONISTA", concluída: false },
+{ setor: "Ambulatorio II - Externo", texto: "TECNICO ENFERMAGEM", concluída: false },
+{ setor: "Ambulatorio Mulher - Recepção", texto: "APRENDIZ ROTINAS ADMINISTRATIVAS", concluída: false },
+{ setor: "Ambulatorio Mulher - Recepção", texto: "LIDER AMBULATORIO", concluída: false },
+{ setor: "Ambulatorio Mulher - Recepção", texto: "RECEPCIONISTA", concluída: false },
+{ setor: "Ambulatorio Oftalmologia - Recepção", texto: "APRENDIZ ROTINAS ADMINISTRATIVAS", concluída: false },
+{ setor: "Ambulatorio Oftalmologia - Recepção", texto: "RECEPCIONISTA", concluída: false },
+{ setor: "Ambulatorio Ortopedia - Recepção", texto: "APRENDIZ ROTINAS ADMINISTRATIVAS", concluída: false },
+{ setor: "Ambulatorio Ortopedia - Recepção", texto: "AUXILIAR ADMINISTRATIVO", concluída: false },
+{ setor: "Ambulatorio Ortopedia - Recepção", texto: "LIDER AMBULATORIO", concluída: false },
+{ setor: "Ambulatorio Ortopedia - Recepção", texto: "RECEPCIONISTA", concluída: false },
+{ setor: "Ambulatorio Pediatria - Recepção", texto: "LIDER AMBULATORIO", concluída: false },
+{ setor: "Ambulatorio Pediatria - Recepção", texto: "RECEPCIONISTA", concluída: false },
+{ setor: "Ambulatorio V - Mulher", texto: "AUXILIAR ENFERMAGEM", concluída: false },
+{ setor: "Ambulatorio V - Mulher", texto: "ENFERMEIRO LIDER", concluída: false },
+{ setor: "Ambulatorio V - Mulher", texto: "SUPERVISOR ADMINISTRATIVO", concluída: false },
+{ setor: "Ambulatorio V - Mulher", texto: "TECNICO ENFERMAGEM", concluída: false },
+{ setor: "Ambulatorio VIII - Cirurgia", texto: "ENFERMEIRO AMBULATORIAL", concluída: false },
+{ setor: "Ambulatorio VIII - Cirurgia", texto: "ENFERMEIRO JR I", concluída: false },
+{ setor: "Ambulatorio VIII - Cirurgia", texto: "TECNICO ENFERMAGEM", concluída: false },
+{ setor: "Ambulatorio X - Ortopedia", texto: "AUXILIAR ENFERMAGEM", concluída: false },
+{ setor: "Ambulatorio X - Ortopedia", texto: "TECNICO ENFERMAGEM", concluída: false },
+{ setor: "Ambulatorio X - Ortopedia", texto: "TECNICO GESSO", concluída: false },
+{ setor: "Ambulatorio XI - Dermatologia", texto: "TECNICO ENFERMAGEM", concluída: false },
+{ setor: "Assessoria Juridica", texto: "ADVOGADO JR", concluída: false },
+{ setor: "Assessoria Juridica", texto: "ADVOGADO PL", concluída: false },
+{ setor: "Assessoria Juridica", texto: "ASSISTENTE JURIDICO", concluída: false },
+{ setor: "Assessoria Juridica", texto: "AUXILIAR SERVIÇOS JURIDICOS", concluída: false },
+{ setor: "Assessoria Juridica", texto: "ESTAGIARIO", concluída: false },
+{ setor: "Assessoria Juridica", texto: "GERENTE JURIDICO", concluída: false },
+{ setor: "Auditoria de Conta", texto: "ANALISTA CONTAS", concluída: false },
+{ setor: "Auditoria de Conta", texto: "ANALISTA CONTAS PL", concluída: false },
+{ setor: "Auditoria de Conta", texto: "AUXILIAR FATURAMENTO", concluída: false },
+{ setor: "Auditoria de Conta", texto: "COORDENADOR AUDITORIA ENFERMAGEM", concluída: false },
+{ setor: "Auditoria de Conta", texto: "ENFERMEIRO AUDITOR", concluída: false },
+{ setor: "Auditoria de Conta", texto: "ESPECIALISTA CONTAS MEDICAS", concluída: false },
+{ setor: "Call Center", texto: "APRENDIZ ROTINAS ADMINISTRATIVAS", concluída: false },
+{ setor: "Call Center", texto: "COORDENADOR CALL CENTER", concluída: false },
+{ setor: "Call Center", texto: "LIDER ATENDIMENTO", concluída: false },
+{ setor: "Call Center", texto: "OPERADOR CALL CENTER", concluída: false },
+{ setor: "Call Center", texto: "OPERADOR CALL CENTER BILINGUE", concluída: false },
+{ setor: "Central de Internação", texto: "AUXILIAR ADMINISTRATIVO", concluída: false },
+{ setor: "Central de Materias Especiais", texto: "ANALISTA OPME", concluída: false },
+{ setor: "Central de Materias Especiais", texto: "APRENDIZ ROTINAS ADMINISTRATIVAS", concluída: false },
+{ setor: "Central de Materias Especiais", texto: "ASSISTENTE MATERIAIS E OPME", concluída: false },
+{ setor: "Central de Materias Especiais", texto: "COORDENADOR OPME", concluída: false },
+{ setor: "Central de Materias Especiais", texto: "ENFERMEIRO DE OPME", concluída: false },
+{ setor: "Central Guias", texto: "APRENDIZ ROTINAS ADMINISTRATIVAS", concluída: false },
+{ setor: "Central Guias", texto: "ASSISTENTE CENTRAL DE GUIAS", concluída: false },
+{ setor: "Central Guias", texto: "AUXILIAR FATURAMENTO", concluída: false },
+{ setor: "Central Guias", texto: "COORDENADOR CENTRAL GUIAS", concluída: false },
+{ setor: "Central Guias", texto: "LIDER CENTRAL GUIAS PL", concluída: false },
+{ setor: "Centro de Estudos", texto: "APRENDIZ ROTINAS ADMINISTRATIVAS", concluída: false },
+{ setor: "Centro de Infusão", texto: "AUXILIAR ENFERMAGEM", concluída: false },
+{ setor: "Centro de Infusão", texto: "CONTINUO", concluída: false },
+{ setor: "Centro de Infusão", texto: "ENFERMEIRO", concluída: false },
+{ setor: "Comercial", texto: "ANALISTA COMERCIAL PL", concluída: false },
+{ setor: "Comercial", texto: "ANALISTA COMERCIAL SR", concluída: false },
+{ setor: "Comercial", texto: "APRENDIZ ROTINAS ADMINISTRATIVAS", concluída: false },
+{ setor: "Comercial", texto: "ASSISTENTE COMERCIAL", concluída: false },
+{ setor: "Comercial", texto: "COORDENADOR COMERCIAL", concluída: false },
+{ setor: "Comercial", texto: "GERENTE COMERCIAL", concluída: false },
+{ setor: "Compras", texto: "ASSISTENTE ADMINISTRATIVO", concluída: false },
+{ setor: "Compras", texto: "ASSISTENTE COMPRAS", concluída: false },
+{ setor: "Compras", texto: "COMPRADOR JR", concluída: false },
+{ setor: "Compras", texto: "COMPRADOR PL", concluída: false },
+{ setor: "Compras", texto: "COMPRADOR SR", concluída: false },
+{ setor: "Compras", texto: "COORDENADOR COMPRAS SR", concluída: false },
+{ setor: "Compras", texto: "SUPERVISOR COMPRAS E CONTRATOS", concluída: false },
+{ setor: "Contabilidade", texto: "ANALISTA CONTABIL", concluída: false },
+{ setor: "Contabilidade", texto: "ASSISTENTE CONTABIL SR", concluída: false },
+{ setor: "Contabilidade", texto: "ASSISTENTE FISCAL JR", concluída: false },
+{ setor: "Contabilidade", texto: "ASSISTENTE FISCAL PL", concluída: false },
+{ setor: "Contabilidade", texto: "AUXILIAR ADMINISTRATIVO", concluída: false },
+{ setor: "Contabilidade", texto: "AUXILIAR CONTABILIDADE", concluída: false },
+{ setor: "Contabilidade", texto: "SUPERVISOR CONTABILIDADE", concluída: false },
+{ setor: "Contas a Receber", texto: "ANALISTA CONTAS A RECEBER JR", concluída: false },
+{ setor: "Contas a Receber", texto: "ANALISTA RECURSOS GLOSAS JR", concluída: false },
+{ setor: "Contas a Receber", texto: "ANALISTA RECURSOS GLOSAS PL", concluída: false },
+{ setor: "Contas a Receber", texto: "APRENDIZ ROTINAS ADMINISTRATIVAS", concluída: false },
+{ setor: "Contas a Receber", texto: "ASSISTENTE ADMINISTRATIVO", concluída: false },
+{ setor: "Contas a Receber", texto: "ASSISTENTE FINANCEIRO JR", concluída: false },
+{ setor: "Contas a Receber", texto: "ASSISTENTE GLOSAS JR", concluída: false },
+{ setor: "Contas a Receber", texto: "ASSISTENTE GLOSAS PL", concluída: false },
+{ setor: "Contas a Receber", texto: "ASSISTENTE GLOSAS SR", concluída: false },
+{ setor: "Contas a Receber", texto: "AUXILIAR CONTAS A RECEBER", concluída: false },
+{ setor: "Contas a Receber", texto: "SUPERVISOR DE CONTAS A RECEBER", concluída: false },
+{ setor: "Controladoria", texto: "ANALISTA CUSTOS PL", concluída: false },
+{ setor: "Controladoria", texto: "ANALISTA DE CADASTRO JR", concluída: false },
+{ setor: "Controladoria", texto: "ANALISTA DE CADASTRO SR", concluída: false },
+{ setor: "Controladoria", texto: "ANALISTA NEGOCIOS PL", concluída: false },
+{ setor: "Controladoria", texto: "ASSISTENTE ADMINISTRATIVO", concluída: false },
+{ setor: "Controladoria", texto: "AUXILIAR ADMINISTRATIVO", concluída: false },
+{ setor: "Controladoria", texto: "GERENTE CONTROLADORIA", concluída: false },
+{ setor: "Controle de Qualidade", texto: "ANALISTA QUALIDADE SR", concluída: false },
+{ setor: "Controle de Qualidade", texto: "ASSISTENTE ADMINISTRATIVO", concluída: false },
+{ setor: "Controle de Qualidade", texto: "COORDENADOR QUALIDADE HOSPITALAR", concluída: false },
+{ setor: "Desospitalização", texto: "ENFERMEIRO", concluída: false },
+{ setor: "Desospitalização", texto: "ENFERMEIRO CENTRAL VAGAS", concluída: false },
+{ setor: "Equipe Multi Terapia Nutricional - EMTN", texto: "APRENDIZ ROTINAS ADMINISTRATIVAS", concluída: false },
+{ setor: "Faturamento", texto: "ANALISTA CONTAS", concluída: false },
+{ setor: "Faturamento", texto: "ANALISTA CONTAS PL", concluída: false },
+{ setor: "Faturamento", texto: "APRENDIZ ROTINAS ADMINISTRATIVAS", concluída: false },
+{ setor: "Faturamento", texto: "AUXILIAR FATURAMENTO", concluída: false },
+{ setor: "Faturamento", texto: "ENFERMEIRO AUDITOR JR", concluída: false },
+{ setor: "Faturamento", texto: "SUPERVISOR FATURAMENTO", concluída: false },
+{ setor: "Faturamento Ambulatorio", texto: "ANALISTA CONTAS PL", concluída: false },
+{ setor: "Financeiro", texto: "ANALISTA CONTAS PL", concluída: false },
+{ setor: "Financeiro", texto: "ANALISTA FINANCEIRO JR", concluída: false },
+{ setor: "Financeiro", texto: "ASSISTENTE ADMINISTRATIVO", concluída: false },
+{ setor: "Financeiro", texto: "ASSISTENTE FINANCEIRO JR", concluída: false },
+{ setor: "Financeiro", texto: "AUXILIAR CAIXA", concluída: false },
+{ setor: "Financeiro", texto: "AUXILIAR FINANCEIRO JR", concluída: false },
+{ setor: "Financeiro", texto: "COORDENADOR ATENDIMENTOS PARTICULARES", concluída: false },
+{ setor: "Financeiro", texto: "COORDENADOR CONTAS A PAGAR", concluída: false },
+{ setor: "Financeiro", texto: "GERENTE FINANCEIRO", concluída: false },
+{ setor: "Gerenciamento de Projetos", texto: "ANALISTA DE PROJETOS E PROCESSO JR", concluída: false },
+{ setor: "Gerenciamento de Projetos", texto: "ANALISTA DE PROJETOS E PROCESSO PL", concluída: false },
+{ setor: "Gerenciamento de Projetos", texto: "ANALISTA DE PROJETOS E PROCESSO SR", concluída: false },
+{ setor: "Gerenciamento de Projetos", texto: "ARQUITETO I", concluída: false },
+{ setor: "Gerenciamento de Projetos", texto: "ARQUITETO PL", concluída: false },
+{ setor: "Gerenciamento de Projetos", texto: "ASSISTENTE ADMINISTRATIVO", concluída: false },
+{ setor: "Gerenciamento de Projetos", texto: "COORDENADOR DE PROJETOS E PROCESSOS", concluída: false },
+{ setor: "Gerenciamento de Projetos", texto: "ENGENHEIRO DE PROJETOS E PROCESSOS PL", concluída: false },
+{ setor: "Gerenciamento de Projetos", texto: "ENGENHEIRO PROJETOS E PROCESSOS SR", concluída: false },
+{ setor: "Gerenciamento de Projetos", texto: "ESPECIALISTA DE PROJETOS E PROCESSOS I", concluída: false },
+{ setor: "Gerenciamento de Projetos", texto: "ESPECIALISTA DE PROJETOS E PROCESSOS II", concluída: false },
+{ setor: "Gerenciamento de Projetos", texto: "GERENTE PROJETOS E PROCESSOS", concluída: false },
+{ setor: "Gestão Ambiental", texto: "ANALISTA AMBIENTAL", concluída: false },
+{ setor: "Gestão Ambiental", texto: "SUPERVISOR AMBIENTAL", concluída: false },
+{ setor: "Hemodinamica Diagnostico", texto: "AUXILIAR ENFERMAGEM", concluída: false },
+{ setor: "Hotelaria", texto: "ANALISTA ADMINISTRATIVO JR", concluída: false },
+{ setor: "Hotelaria", texto: "APRENDIZ ROTINAS ADMINISTRATIVAS", concluída: false },
+{ setor: "Hotelaria", texto: "CAPITÃO PORTEIRO", concluída: false },
+{ setor: "Hotelaria", texto: "CONCIERGE", concluída: false },
+{ setor: "Hotelaria", texto: "LIDER DE HOTELARIA", concluída: false },
+{ setor: "Hotelaria", texto: "LIDER HIGIENE HOSPITALAR", concluída: false },
+{ setor: "Hotelaria", texto: "MENSAGEIRO", concluída: false },
+{ setor: "Hotelaria", texto: "OFICIAL DE MANUTENÇÃO", concluída: false },
+{ setor: "Hotelaria", texto: "ORIENTADOR ATENDIMENTO PL", concluída: false },
+{ setor: "Hotelaria", texto: "ORIENTADOR DE ATENDIMENTO BILINGUE", concluída: false },
+{ setor: "Hotelaria", texto: "ORIENTADOR SUPERVISOR", concluída: false },
+{ setor: "Hotelaria", texto: "RECREACIONISTA", concluída: false },
+{ setor: "Hotelaria", texto: "SUPERVISOR HOTELARIA", concluída: false },
+{ setor: "Internação - 1º F", texto: "AUXILIAR ENFERMAGEM", concluída: false },
+{ setor: "Internação - 1º F", texto: "ENFERMEIRO", concluída: false },
+{ setor: "Internação - 1º F", texto: "ESCRITURARIO", concluída: false },
+{ setor: "Internação - 1º F", texto: "TECNICO ENFERMAGEM", concluída: false },
+{ setor: "Laboratorio de Analise Clinica", texto: "BIOLOGO", concluída: false },
+{ setor: "Laboratorio de Analise Clinica", texto: "BIOMEDICO", concluída: false },
+{ setor: "Laboratorio de Analise Clinica", texto: "COORDENADOR TECNICO ", concluída: false },
+{ setor: "Laboratorio de Analise Clinica", texto: "TECNICO ANALISES CLINICAS", concluída: false },
+{ setor: "Limpeza e Higiene", texto: "AUXILIAR HIGIENE", concluída: false },
+{ setor: "Limpeza e Higiene", texto: "COORDENADOR ADMINISTRAÇÃO", concluída: false },
+{ setor: "Limpeza e Higiene", texto: "LIDER HIGIENE HOSPITALAR", concluída: false },
+{ setor: "Mamografia", texto: "TECNICO RADIOLOGIA", concluída: false },
+{ setor: "Manutenção Geral", texto: "AUXILIAR MANUTENÇÃO", concluída: false },
+{ setor: "Manutenção Geral", texto: "ELETRICISTA", concluída: false },
+{ setor: "Manutenção Geral", texto: "ENCANADOR", concluída: false },
+{ setor: "Manutenção Geral", texto: "LIDER MANUTENÇÃO", concluída: false },
+{ setor: "Manutenção Geral", texto: "MARCENEIRO", concluída: false },
+{ setor: "Manutenção Geral", texto: "MEIO OFICIAL MECANICO", concluída: false },
+{ setor: "Manutenção Geral", texto: "PEDREIRO", concluída: false },
+{ setor: "Manutenção Geral", texto: "SUPERVISOR MANUTENÇÃO", concluída: false },
+{ setor: "Marketing", texto: "ANALISTA COMUNICAÇÃO", concluída: false },
+{ setor: "Marketing", texto: "ANALISTA MARKETING PL", concluída: false },
+{ setor: "Marketing", texto: "ANALISTA MARKETING SR", concluída: false },
+{ setor: "Marketing", texto: "APRENDIZ ROTINAS ADMINISTRATIVAS", concluída: false },
+{ setor: "Marketing", texto: "ASSISTENTE ARTES", concluída: false },
+{ setor: "Marketing", texto: "ASSISTENTE MARKETING", concluída: false },
+{ setor: "Marketing", texto: "DESIGNER JR", concluída: false },
+{ setor: "Marketing", texto: "GERENTE DE NEGOCIOS E MARKETING JR", concluída: false },
+{ setor: "NAM - Nucleo de Agendas Medicas", texto: "APRENDIZ ROTINAS ADMINISTRATIVAS", concluída: false },
+{ setor: "NAM - Nucleo de Agendas Medicas", texto: "ASSISTENTE ADMINISTRATIVO", concluída: false },
+{ setor: "NAM - Nucleo de Agendas Medicas", texto: "OPERADOR DE ATENDIMENTO", concluída: false },
+{ setor: "NAPA - Nucleo Procedimentos Ambulatorial", texto: "ASSISTENTE ADMINISTRATIVO", concluída: false },
+{ setor: "NAPA - Nucleo Procedimentos Ambulatorial", texto: "ASSISTENTE ADMINISTRATIVO PL", concluída: false },
+{ setor: "NAPA - Nucleo Procedimentos Ambulatorial", texto: "AUXILIAR ADMINISTRATIVO", concluída: false },
+{ setor: "Neurologia-EEG/ENMG", texto: "AUXILIAR ENFERMAGEM", concluída: false },
+{ setor: "Núcleo de Agendamento", texto: "ASSISTENTE PRE AGENDAMENTO", concluída: false },
+{ setor: "Núcleo de Agendamento", texto: "AUXILIAR ADMINISTRATIVO", concluída: false },
+{ setor: "Núcleo de Agendamento", texto: "COORDENADOR NUCLEO DE AGENDAMENTO CIRURGICO", concluída: false },
+{ setor: "Núcleo de Agendamento", texto: "ENFERMEIRO", concluída: false },
+{ setor: "Otorrino", texto: "AUXILIAR ENFERMAGEM", concluída: false },
+{ setor: "Ouvidoria", texto: "ASSISTENTE OUVIDORIA", concluída: false },
+{ setor: "Ouvidoria", texto: "COORDENADOR OUVIDORIA", concluída: false },
+{ setor: "Ouvidoria", texto: "LIDER OUVIDORIA", concluída: false },
+{ setor: "PA - Adulto", texto: "APRENDIZ ROTINAS ADMINISTRATIVAS", concluída: false },
+{ setor: "PA - Adulto", texto: "AUXILIAR COLETA LABORATORIO", concluída: false },
+{ setor: "PA - Adulto", texto: "AUXILIAR ENFERMAGEM", concluída: false },
+{ setor: "PA - Adulto", texto: "AUXILIAR ENFERMAGEM JR", concluída: false },
+{ setor: "PA - Adulto", texto: "CONTINUO", concluída: false },
+{ setor: "PA - Adulto", texto: "ENFERMEIRO", concluída: false },
+{ setor: "PA - Adulto", texto: "ENFERMEIRO JR I", concluída: false },
+{ setor: "PA - Adulto", texto: "ESCRITURARIO", concluída: false },
+{ setor: "PA - Adulto", texto: "TECNICO ENFERMAGEM", concluída: false },
+{ setor: "PA - Adulto", texto: "TECNICO GESSO", concluída: false },
+{ setor: "PA - Infantil", texto: "AUXILIAR ENFERMAGEM", concluída: false },
+{ setor: "PA - Infantil", texto: "ENFERMEIRO", concluída: false },
+{ setor: "PA - Infantil", texto: "ESCRITURARIO", concluída: false },
+{ setor: "PA - Infantil", texto: "TECNICO ENFERMAGEM", concluída: false },
+{ setor: "Padronização", texto: "ENFERMEIRO PADRONIZAÇÃO", concluída: false },
+{ setor: "Prova de Função Pulmonar", texto: "TECNICO ENFERMAGEM", concluída: false },
+{ setor: "Radiologia", texto: "APRENDIZ ROTINAS ADMINISTRATIVAS", concluída: false },
+{ setor: "Radiologia", texto: "SUPERVISOR ATENDIMENTO", concluída: false },
+{ setor: "Radiologia", texto: "SUPERVISOR RADIOLOGIA", concluída: false },
+{ setor: "Radiologia", texto: "TECNICO RADIOLOGIA", concluída: false },
+{ setor: "Recepção Central", texto: "ANALISTA CONTAS", concluída: false },
+{ setor: "Recepção Central", texto: "ANALISTA CONTAS PL", concluída: false },
+{ setor: "Recepção Central", texto: "ANALISTA CONTAS SR", concluída: false },
+{ setor: "Recepção Central", texto: "APRENDIZ ROTINAS ADMINISTRATIVAS", concluída: false },
+{ setor: "Recepção Central", texto: "ASSISTENTE ADMINISTRATIVO", concluída: false },
+{ setor: "Recepção Central", texto: "ASSISTENTE ADMINISTRATIVO PL", concluída: false },
+{ setor: "Recepção Central", texto: "AUXILIAR ADMINISTRATIVO", concluída: false },
+{ setor: "Recepção Central", texto: "COORDENADOR RECEPÇÃO", concluída: false },
+{ setor: "Recepção Central", texto: "ESCRITURARIO", concluída: false },
+{ setor: "Recepção Central", texto: "FATURISTA", concluída: false },
+{ setor: "Recepção Central", texto: "OPERADOR CALL CENTER", concluída: false },
+{ setor: "Recepção Central", texto: "RECEPCIONISTA", concluída: false },
+{ setor: "Recepção Central", texto: "RECEPCIONISTA BILINGUE", concluída: false },
+{ setor: "Recepção Central", texto: "RECEPCIONISTA LIDER", concluída: false },
+{ setor: "Recepção Central", texto: "SUPERVISOR ADMINISTRATIVO", concluída: false },
+{ setor: "Recepção Central", texto: "SUPERVISOR ATENDIMENTO", concluída: false },
+{ setor: "Recrutamento e Seleção", texto: "ANALISTA DADOS GERENCIAIS", concluída: false },
+{ setor: "Recrutamento e Seleção", texto: "ANALISTA RECRUTAMENTO E SELEÇÃO PL", concluída: false },
+{ setor: "Recrutamento e Seleção", texto: "ASSISTENTE ADMINISTRATIVO", concluída: false },
+{ setor: "Recursos Humanos", texto: "GERENTE RECURSOS HUMANOS", concluída: false },
+{ setor: "Relacionamento Empresarial", texto: "ANALISTA DE RELACIONAMENTO E NEGOCIOS SR", concluída: false },
+{ setor: "Relacionamento Empresarial", texto: "ANALISTA RELACIONAMENTO EMPRESARIAL PL", concluída: false },
+{ setor: "Relacionamento Medico", texto: "ANALISTA RELACIONAMENTO MEDICO", concluída: false },
+{ setor: "Relacionamento Medico", texto: "APRENDIZ ROTINAS ADMINISTRATIVAS", concluída: false },
+{ setor: "Relacionamento Medico", texto: "AUXILIAR ADMINISTRATIVO", concluída: false },
+{ setor: "REPASSE MEDICO", texto: "ANALISTA DE REPASSE MEDICO SR", concluída: false },
+{ setor: "REPASSE MEDICO", texto: "AUXILIAR ADMINISTRATIVO", concluída: false },
+{ setor: "REPASSE MEDICO", texto: "COORDENADOR ADM TERCEIROS", concluída: false },
+{ setor: "Ressonancia Magnetica", texto: "ASSISTENTE ADMINISTRATIVO", concluída: false },
+{ setor: "Ressonancia Magnetica", texto: "ASSISTENTE ADMINISTRATIVO SR", concluída: false },
+{ setor: "Ressonancia Magnetica", texto: "AUXILIAR ENFERMAGEM", concluída: false },
+{ setor: "Ressonancia Magnetica", texto: "TECNICO ENFERMAGEM", concluída: false },
+{ setor: "SAME - Serv Arquivo Medico e Logistica", texto: "ASSISTENTE ADMINISTRATIVO", concluída: false },
+{ setor: "SAME - Serv Arquivo Medico e Logistica", texto: "ASSISTENTE ADMINISTRATIVO PL", concluída: false },
+{ setor: "SAME - Serv Arquivo Medico e Logistica", texto: "AUXILIAR SAME", concluída: false },
+{ setor: "SAME - Serv Arquivo Medico e Logistica", texto: "COORDENADOR SAME", concluída: false },
+{ setor: "SAME - Serv Arquivo Medico e Logistica", texto: "ESCRITURARIO", concluída: false },
+{ setor: "SAME - Serv Arquivo Medico e Logistica", texto: "LIDER SAME", concluída: false },
+{ setor: "SCIH - Serv.Contr.Infec.Hospitalar", texto: "COORDENADOR S.C.I.H", concluída: false },
+{ setor: "SCIH - Serv.Contr.Infec.Hospitalar", texto: "ENFERMEIRO S.C.I.H.", concluída: false },
+{ setor: "Serviço de Apoio", texto: "AJUDANTE SERVIÇOS GERAIS", concluída: false },
+{ setor: "Shinsetsu", texto: "AUXILIAR ADMINISTRATIVO", concluída: false },
+{ setor: "Shinsetsu", texto: "ESPECIALISTA DE PROJETOS E PROCESSOS II", concluída: false },
+{ setor: "Superintendência Administrativa", texto: "SUPERINTENDENTE ADMINISTRATIVO FINANCEIRO", concluída: false },
+{ setor: "Superintendência Clínica", texto: "PSICOLOGO", concluída: false },
+{ setor: "Superintendência Enfermagem", texto: "ASSISTENTE SOCIAL", concluída: false },
+{ setor: "T.I.- Tecnologia de Informação", texto: "ANALISTA DE SISTEMAS", concluída: false },
+{ setor: "T.I.- Tecnologia de Informação", texto: "ANALISTA GOVERNANÇA JR", concluída: false },
+{ setor: "T.I.- Tecnologia de Informação", texto: "ANALISTA INFRAESTRUTURA JR", concluída: false },
+{ setor: "T.I.- Tecnologia de Informação", texto: "ANALISTA INFRAESTRUTURA PL", concluída: false },
+{ setor: "T.I.- Tecnologia de Informação", texto: "ANALISTA INFRAESTRUTURA SR", concluída: false },
+{ setor: "T.I.- Tecnologia de Informação", texto: "ANALISTA PROJETOS TI PL", concluída: false },
+{ setor: "T.I.- Tecnologia de Informação", texto: "ANALISTA SISTEMAS JR", concluída: false },
+{ setor: "T.I.- Tecnologia de Informação", texto: "ANALISTA SISTEMAS PL", concluída: false },
+{ setor: "T.I.- Tecnologia de Informação", texto: "ANALISTA SISTEMAS SR", concluída: false },
+{ setor: "T.I.- Tecnologia de Informação", texto: "ANALISTA SUPORTE TECNICO", concluída: false },
+{ setor: "T.I.- Tecnologia de Informação", texto: "ASSISTENTE ADMINISTRATIVO", concluída: false },
+{ setor: "T.I.- Tecnologia de Informação", texto: "COORDENADOR INFRAESTRUTURA", concluída: false },
+{ setor: "T.I.- Tecnologia de Informação", texto: "COORDENADOR SEGURANÇA T.I", concluída: false },
+{ setor: "T.I.- Tecnologia de Informação", texto: "COORDENADOR SISTEMAS", concluída: false },
+{ setor: "T.I.- Tecnologia de Informação", texto: "ESPECIALISTA DE INFRAESTRUTURA", concluída: false },
+{ setor: "T.I.- Tecnologia de Informação", texto: "ESTAGIARIO", concluída: false },
+{ setor: "T.I.- Tecnologia de Informação", texto: "GERENTE T.I", concluída: false },
+{ setor: "T.I.- Tecnologia de Informação", texto: "TECNICO DE SERVICE DESK", concluída: false },
+{ setor: "Tomografia", texto: "ASSISTENTE ADMINISTRATIVO", concluída: false },
+{ setor: "Tomografia", texto: "ASSISTENTE ADMINISTRATIVO SR", concluída: false },
+{ setor: "Tomografia", texto: "AUXILIAR ENFERMAGEM", concluída: false },
+{ setor: "Tomografia", texto: "AUXILIAR ENFERMAGEM JR", concluída: false },
+{ setor: "Tomografia", texto: "ENFERMEIRO", concluída: false },
+{ setor: "Tomografia", texto: "ENFERMEIRO JR I", concluída: false },
+{ setor: "Transporte", texto: "CONTINUO TRANSPORTE", concluída: false },
+{ setor: "Transporte", texto: "LIDER TRANSPORTE", concluída: false },
+{ setor: "Transporte", texto: "MOTORISTA", concluída: false },
+{ setor: "Treinamento e Desenvolvimento", texto: "ANALISTA DE DHO JR", concluída: false },
+{ setor: "Treinamento e Desenvolvimento", texto: "ANALISTA TREINAMENTO PL", concluída: false },
+{ setor: "Treinamento e Desenvolvimento", texto: "APRENDIZ ROTINAS ADMINISTRATIVAS", concluída: false },
+{ setor: "Treinamento e Desenvolvimento", texto: "ASSISTENTE ADMINISTRATIVO", concluída: false },
+{ setor: "Treinamento e Desenvolvimento", texto: "COORDENADOR TREINAMENTO E DHO", concluída: false },
+{ setor: "Treinamento e Desenvolvimento", texto: "ENFERMEIRO EDUCACIONAL", concluída: false },
+{ setor: "Treinamento e Desenvolvimento", texto: "ENFERMEIRO EDUCACIONAL LIDER", concluída: false },
+{ setor: "U.T.I - Geral 1º CD", texto: "AUXILIAR ENFERMAGEM", concluída: false },
+{ setor: "U.T.I - Geral 1º CD", texto: "ENFERMEIRO", concluída: false },
+{ setor: "U.T.I - Geral 1º CD", texto: "ENFERMEIRO JR I", concluída: false },
+{ setor: "U.T.I - Geral 1º CD", texto: "ESCRITURARIO", concluída: false },
+{ setor: "U.T.I - Geral 1º CD", texto: "TECNICO ENFERMAGEM", concluída: false },
+{ setor: "Ultrassonografia", texto: "APRENDIZ ROTINAS ADMINISTRATIVAS", concluída: false },
+{ setor: "Ultrassonografia", texto: "ASSISTENTE ADMINISTRATIVO", concluída: false },
+{ setor: "Ultrassonografia", texto: "ASSISTENTE ADMINISTRATIVO SR", concluída: false },
+{ setor: "Ultrassonografia", texto: "ASSISTENTE ATENDIMENTO", concluída: false },
+{ setor: "Ultrassonografia", texto: "ASSISTENTE COORDENAÇAO", concluída: false },
+{ setor: "Ultrassonografia", texto: "SUPERVISOR ATENDIMENTO", concluída: false },
+{ setor: "Ultrassonografia", texto: "TECNICO ENFERMAGEM", concluída: false },
+{ setor: "Unidade de Coleta", texto: "AUXILIAR COLETA LABORATORIO", concluída: false },
+{ setor: "Unidade de Coleta", texto: "AUXILIAR TRIAGEM LABORATORIO", concluída: false },
+{ setor: "Unidade de Coleta", texto: "LIDER AMBULATORIO", concluída: false },
+{ setor: "Unidade de Coleta", texto: "LIDER COLETA", concluída: false },
+{ setor: "Unidade de Coleta", texto: "RECEPCIONISTA", concluída: false },
+{ setor: "Unidade de Coleta", texto: "APRENDIZ ROTINAS ADMINISTRATIVAS", concluída: false },
+{ setor: "Verificação de Prontuarios", texto: "APRENDIZ ROTINAS ADMINISTRATIVAS", concluída: false },
+{ setor: "Verificação de Prontuarios", texto: "ESCRITURARIA LIDER", concluída: false },
+{ setor: "Verificação de Prontuarios", texto: "ESCRITURARIO", concluída: false }
+    ];
+
+    function carregarDados() {
+        const dadosSalvos = localStorage.getItem("tarefasPorSetor");
+        return dadosSalvos ? JSON.parse(dadosSalvos) : dadosPadrao1;
+    }
+
+    function salvarDados(dados) {
+        localStorage.setItem("tarefasPorSetor", JSON.stringify(dados));
+    }
+
+    let tarefas = carregarDados();
+
+    function renderizar() {
+        const container = document.getElementById("conteudo");
+        container.innerHTML = "";
+
+        const setores = [...new Set(tarefas.map(t => t.setor))];
+
+        setores.forEach(setor => {
+            const divSetor = document.createElement("div");
+            divSetor.className = "setor";
+
+            const titulo = document.createElement("h2");
+            titulo.textContent = setor;
+            divSetor.appendChild(titulo);
+
+            const ul = document.createElement("ul");
+
+            const tarefasSetor = tarefas
+                .filter(t => t.setor === setor)
+                .sort((a, b) => a.concluida - b.concluida);
+
+            tarefasSetor.forEach(tarefa => {
+                const li = document.createElement("li");
+                if (tarefa.concluida) li.classList.add("concluida");
+
+                const botao = document.createElement("button");
+                botao.textContent = tarefa.concluida ? "Reabrir" : "Concluir";
+                if (tarefa.concluida) botao.classList.add("reabrir");
+
+                botao.onclick = () => alternarTarefa(tarefa);
+
+                li.appendChild(botao);
+                li.appendChild(document.createTextNode(tarefa.texto));
+                ul.appendChild(li);
+            });
+
+            divSetor.appendChild(ul);
+            container.appendChild(divSetor);
+        });
+    }
+
+    function alternarTarefa(tarefa) {
+        tarefa.concluida = !tarefa.concluida;
+        salvarDados(tarefas);
+        renderizar();
+    }
+
+    renderizar();
+</script>
+
+</body>
+</html>
